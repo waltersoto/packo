@@ -1,0 +1,12 @@
+{
+  "package":"library",
+  "version":"0.0.1",
+  "source":"./SourceCode",
+  "release":"./Release",
+  "actions":[{ "type":"bundle",
+               "filename":"{package}.{version}.js",
+				"settings":[{"key":"enclose","value":"release.js"},
+							{"key":"license","value":"license.txt"}] 
+			  },
+			 {"type":"minify","filename":"{filename}.min.{extension}","ignore":["*.min.*"]}]
+}
