@@ -5,6 +5,7 @@ Platform: windows
 
 Requirements: .NET 4.5 or greater
 
+Nuget dependencies: YUICompressor.NET.2.7.0.0
 
 **Usage:** packo.exe "C:\Project\Scripts\build.json"
 
