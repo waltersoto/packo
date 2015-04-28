@@ -99,19 +99,6 @@ namespace packo
 
 
 
-        private List<string> PlaceHolders(string txt)
-        {
-            var l = new List<string>();
-
-            const string pattern = @"\//{[\s\S]*?\}";
-            MatchCollection matches = Regex.Matches(txt, pattern);
-            if (matches.Count <= 0) return l;
-
-            l.AddRange(from Match m in matches select m.Value);
-
-            return l;
-        } 
-
         private void Bundle(Action action)
         {
             // action.Filename;
@@ -123,7 +110,7 @@ namespace packo
             var settings = action.Settings;
 
             string enclose = Templates.DefaultEnclose;
-            var enclosePlaceholders = new List<string>();
+
             string license = "";
 
 
@@ -138,8 +125,6 @@ namespace packo
                             Console.WriteLine(Message.AddEnclose,setting.Value);
                             var result = ReadFileFromSetting(setting.Value, Templates.DefaultEnclose).FirstOrDefault(); 
                             enclose = result.Value;
-
-                            enclosePlaceholders = PlaceHolders(enclose);
 
                             var file = new FileInfo(result.Key);
                             toSkip.Add(file.Name);
@@ -160,15 +145,13 @@ namespace packo
                 }
             }
 
-            StringBuilder bundle = new StringBuilder();
+     
             var toBundle = new Dictionary<string, string>();
 
             foreach (FileInfo file in source.GetFiles().Where(m => m.Extension.Trim().ToLower() == SupportedExtensions.Js)
                 .Where(file => toSkip.All(m => !String.Equals(m.Trim(), file.Name.Trim(), StringComparison.CurrentCultureIgnoreCase))))
             {
-                bundle.Append(File.ReadAllText(file.FullName));
-                bundle.Append(Environment.NewLine);
-            
+                
                 toBundle.Add(string.Format(Templates.Enclose, file.Name), File.ReadAllText(file.FullName));
                 Console.WriteLine(Message.Adding, file.Name);
             }
@@ -177,8 +160,7 @@ namespace packo
 
             if (!string.IsNullOrEmpty(action.Filename))
             {
-                bundled = action.Filename.Replace(Templates.Version, Package.Version).Replace(Templates.Package, Package.Package);
-                    
+                bundled = action.Filename.Replace(Templates.Version, Package.Version).Replace(Templates.Package, Package.Package);    
             }
 
             string toSave = string.Concat(Package.Release, @"\", bundled);
