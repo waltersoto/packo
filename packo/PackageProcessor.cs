@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Mime;
 using System.Text;
+using System.Text.RegularExpressions;
 using Yahoo.Yui.Compressor;
 
 namespace packo
@@ -95,7 +97,20 @@ namespace packo
                 : new Dictionary<string, string>() {{addPath, defaultResult}};
         }
 
-     
+
+
+        private List<string> PlaceHolders(string txt)
+        {
+            var l = new List<string>();
+
+            const string pattern = @"\//{[\s\S]*?\}";
+            MatchCollection matches = Regex.Matches(txt, pattern);
+            if (matches.Count <= 0) return l;
+
+            l.AddRange(from Match m in matches select m.Value);
+
+            return l;
+        } 
 
         private void Bundle(Action action)
         {
@@ -107,7 +122,8 @@ namespace packo
 
             var settings = action.Settings;
 
-            string enclose = Templates.Enclose;
+            string enclose = Templates.DefaultEnclose;
+            var enclosePlaceholders = new List<string>();
             string license = "";
 
 
@@ -120,8 +136,11 @@ namespace packo
                         case SettingNames.Enclose:
                         {
                             Console.WriteLine(Message.AddEnclose,setting.Value);
-                            var result = ReadFileFromSetting(setting.Value, Templates.Enclose).FirstOrDefault(); 
+                            var result = ReadFileFromSetting(setting.Value, Templates.DefaultEnclose).FirstOrDefault(); 
                             enclose = result.Value;
+
+                            enclosePlaceholders = PlaceHolders(enclose);
+
                             var file = new FileInfo(result.Key);
                             toSkip.Add(file.Name);
                         }
@@ -142,12 +161,15 @@ namespace packo
             }
 
             StringBuilder bundle = new StringBuilder();
+            var toBundle = new Dictionary<string, string>();
 
             foreach (FileInfo file in source.GetFiles().Where(m => m.Extension.Trim().ToLower() == SupportedExtensions.Js)
                 .Where(file => toSkip.All(m => !String.Equals(m.Trim(), file.Name.Trim(), StringComparison.CurrentCultureIgnoreCase))))
             {
                 bundle.Append(File.ReadAllText(file.FullName));
                 bundle.Append(Environment.NewLine);
+            
+                toBundle.Add(string.Format(Templates.Enclose, file.Name), File.ReadAllText(file.FullName));
                 Console.WriteLine(Message.Adding, file.Name);
             }
 
@@ -161,8 +183,9 @@ namespace packo
 
             string toSave = string.Concat(Package.Release, @"\", bundled);
 
-            string content = string.Concat(license, Environment.NewLine, Environment.NewLine,
-                enclose.Replace(Templates.Enclose, bundle.ToString()));
+            enclose = toBundle.Aggregate(enclose, (current, h) => current.Replace(h.Key, h.Value));
+
+            string content = string.Concat(license, Environment.NewLine, Environment.NewLine,enclose);
             Console.WriteLine(Message.Saving,bundled);
             File.WriteAllText(toSave,content);
 

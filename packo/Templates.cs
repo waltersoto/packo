@@ -7,7 +7,8 @@ namespace packo
         public const string Version = "{version}";
         public const string Package = "{package}";
         public const string Extension = "{extension}";
-        public const string Enclose = "//{enclose}";
+        public const string Enclose = "//{{{0}}}";
+        public const string DefaultEnclose = "";
 
         public const string MinifyFilename = "{filename}.min.{extension}";
 
