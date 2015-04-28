@@ -193,6 +193,12 @@ namespace packo
                 bool skip = false;
 
                 string extension = file.Extension.Trim().ToLower();
+                string cleanExtension = extension;
+                
+                if (cleanExtension.StartsWith("."))
+                {
+                    cleanExtension = cleanExtension.TrimStart('.');
+                }
 
                 foreach (string pattern in ignore)
                 {
@@ -240,18 +246,12 @@ namespace packo
 
                 }
 
-                
-           
-                 
-
-                
                 string extensionless = file.Name.TrimEnd(extension.ToCharArray());
                         
-
                 string newFile = action.Filename.Replace(Templates.Filename,extensionless)
                     .Replace(Templates.Version, Package.Version)
                     .Replace(Templates.Package, Package.Package)
-                    .Replace(Templates.Extension,extension);
+                    .Replace(Templates.Extension, cleanExtension);
 
                 string toSave = string.Concat(Package.Release, @"\", newFile);
 
