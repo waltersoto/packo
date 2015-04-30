@@ -12,6 +12,7 @@ namespace packo
         public const string Saving = "Saving {0}";
         public const string AddLicense = "Adding license {0}";
         public const string AddEnclose = "Adding enclose {0}";
+        public const string Error = "Error: {0}";
 
         public const string Exit = "Hit any key...";
     }

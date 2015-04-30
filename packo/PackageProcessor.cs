@@ -12,9 +12,9 @@ namespace packo
     public class PackageProcessor
     {
 
-        private readonly List<ProcessingError> _errors; 
+        public List<ProcessingError> Errors { set; get; } 
       
-        public PackageProcessor() { _errors = new List<ProcessingError>(); }
+        public PackageProcessor() { Errors = new List<ProcessingError>(); }
 
         public PackageProcessor(BuildPackage package,FileInfo buildFile):this()
         {
@@ -37,7 +37,7 @@ namespace packo
 
                 if (!Directory.Exists(src))
                 {
-                    _errors.Add(new ProcessingError
+                    Errors.Add(new ProcessingError
                     {
                         Id = 404,
                         Message = string.Format(Message.DoesNotExists, PackageFolderNames.Source)
@@ -46,7 +46,7 @@ namespace packo
 
             }
 
-            if (!rel.StartsWith("./") && !rel.StartsWith(@".\")) return _errors.Count == 0;
+            if (!rel.StartsWith("./") && !rel.StartsWith(@".\")) return Errors.Count == 0;
 
             rel = rel.Substring(2);
             rel = string.Concat(BuildFile.DirectoryName, @"\", rel);
@@ -55,7 +55,7 @@ namespace packo
 
             if (!Directory.Exists(rel))
             {
-                _errors.Add(new ProcessingError
+                Errors.Add(new ProcessingError
                 {
                     Id = 404,
                     Message = string.Format(Message.DoesNotExists, PackageFolderNames.Release)
@@ -63,14 +63,14 @@ namespace packo
             }
 
 
-            return _errors.Count == 0;
+            return Errors.Count == 0;
 
         }
 
         public void Process()
         {
 
-            foreach (Action action in Package.Actions)
+            foreach (var action in Package.Actions)
             {
                 switch (action.Type.Trim().ToLower())
                 {
@@ -90,7 +90,7 @@ namespace packo
                 return new Dictionary<string, string> { { filename, File.ReadAllText(filename) } };
             }
          
-            string addPath = string.Concat(Package.Source, @"/", filename);
+            var addPath = string.Concat(Package.Source, @"/", filename);
 
             return File.Exists(addPath)
                 ? new Dictionary<string, string>() { { addPath, File.ReadAllText(addPath) } } 
@@ -109,9 +109,9 @@ namespace packo
 
             var settings = action.Settings;
 
-            string enclose = Templates.DefaultEnclose;
+            var enclose = Templates.DefaultEnclose;
 
-            string license = "";
+            var license = "";
 
 
             if (settings != null && settings.Length > 0)
@@ -149,25 +149,25 @@ namespace packo
             var toBundle = new Dictionary<string, string>();
 
             foreach (FileInfo file in source.GetFiles().Where(m => m.Extension.Trim().ToLower() == SupportedExtensions.Js)
-                .Where(file => toSkip.All(m => !String.Equals(m.Trim(), file.Name.Trim(), StringComparison.CurrentCultureIgnoreCase))))
+                .Where(file => toSkip.All(m => !string.Equals(m.Trim(), file.Name.Trim(), StringComparison.CurrentCultureIgnoreCase))))
             {
                 
                 toBundle.Add(string.Format(Templates.Enclose, file.Name), File.ReadAllText(file.FullName));
                 Console.WriteLine(Message.Adding, file.Name);
             }
 
-            string bundled = string.Concat(Path.GetRandomFileName(),SupportedExtensions.Js);
+            var bundled = string.Concat(Path.GetRandomFileName(),SupportedExtensions.Js);
 
             if (!string.IsNullOrEmpty(action.Filename))
             {
                 bundled = action.Filename.Replace(Templates.Version, Package.Version).Replace(Templates.Package, Package.Package);    
             }
 
-            string toSave = string.Concat(Package.Release, @"\", bundled);
+            var toSave = string.Concat(Package.Release, @"\", bundled);
 
             enclose = toBundle.Aggregate(enclose, (current, h) => current.Replace(h.Key, h.Value));
 
-            string content = string.Concat(license, Environment.NewLine, Environment.NewLine,enclose);
+            var content = string.Concat(license, Environment.NewLine, Environment.NewLine,enclose);
             Console.WriteLine(Message.Saving,bundled);
             File.WriteAllText(toSave,content);
 
@@ -177,7 +177,7 @@ namespace packo
         private void Minify(Action action)
         {
             var source = new DirectoryInfo(Package.Release);
-            List<string> ignore = new List<string>();
+            var ignore = new List<string>();
 
             if (string.IsNullOrEmpty(action.Filename))
             {
@@ -224,7 +224,7 @@ namespace packo
                     }
                     else
                     {
-                        skip = String.Equals(file.Name.Trim(), toMatch.Trim(), StringComparison.CurrentCultureIgnoreCase);
+                        skip = string.Equals(file.Name.Trim(), toMatch.Trim(), StringComparison.CurrentCultureIgnoreCase);
                     }
                         
                 }
@@ -234,21 +234,34 @@ namespace packo
                 string txt = File.ReadAllText(file.FullName);
 
 
-                if (extension == SupportedExtensions.Js)
+                switch (extension)
                 {
-                    var compressor = new JavaScriptCompressor
+                    case SupportedExtensions.Js:
                     {
-                        PreserveAllSemicolons = true
-                    };
+                        var compressor = new JavaScriptCompressor
+                        {
+                            PreserveAllSemicolons = true,
+                            ErrorReporter = new CustomErrorReporter(LoggingType.None)
+                        };
+                        try
+                        {
+                           txt = compressor.Compress(txt);
+                        }
+                        catch (EcmaScript.NET.EcmaScriptRuntimeException ex)
+                        {
+                           Console.WriteLine(Message.Error,ex.Message); 
+                        }
+                        
+                    }
+                        break;
+                    case SupportedExtensions.Css:
+                    {
+                        var compressor = new CssCompressor();
 
-                    txt = compressor.Compress(txt);
-                }
-                else if (extension == SupportedExtensions.Css)
-                {
-                    var compressor = new CssCompressor();
+                        txt = compressor.Compress(txt);
 
-                    txt = compressor.Compress(txt);
-
+                    }
+                        break;
                 }
 
                 string extensionless = file.Name.TrimEnd(extension.ToCharArray());

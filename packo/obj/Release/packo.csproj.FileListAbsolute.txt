@@ -6,3 +6,8 @@ C:\Users\sotoreyesw\Documents\Visual Studio 2013\Projects\packo\packo\bin\Releas
 C:\Users\sotoreyesw\Documents\Visual Studio 2013\Projects\packo\packo\obj\Release\packo.exe
 C:\Users\sotoreyesw\Documents\Visual Studio 2013\Projects\packo\packo\obj\Release\packo.pdb
 C:\Users\sotoreyesw\Documents\Visual Studio 2013\Projects\packo\packo\obj\Release\packo.csprojResolveAssemblyReference.cache
+C:\Users\sotoreyesw\Documents\Visual Studio 2013\Projects\packo\packo\bin\Release\packo.exe.manifest
+C:\Users\sotoreyesw\Documents\Visual Studio 2013\Projects\packo\packo\bin\Release\packo.application
+C:\Users\sotoreyesw\Documents\Visual Studio 2013\Projects\packo\packo\obj\Release\packo.TrustInfo.xml
+C:\Users\sotoreyesw\Documents\Visual Studio 2013\Projects\packo\packo\obj\Release\packo.exe.manifest
+C:\Users\sotoreyesw\Documents\Visual Studio 2013\Projects\packo\packo\obj\Release\packo.application

@@ -7,7 +7,7 @@
     <framework targetVersion="4.5" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="Application Files\packo_1_0_0_5\packo.exe.manifest" size="6536">
+    <dependentAssembly dependencyType="install" codebase="packo.exe.manifest" size="6536">
       <assemblyIdentity name="packo.exe" version="1.0.0.5" publicKeyToken="0000000000000000" language="en" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>

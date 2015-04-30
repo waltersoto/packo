@@ -42,13 +42,18 @@ namespace packo
                     {
                         var p = new PackageProcessor(Read(a), new FileInfo(a));
 
-                        if (p.PreProcess())
+                        if (!p.PreProcess())
                         {
-                            if (process)
+                            foreach (var err in p.Errors)
                             {
-                                p.Process();
+                                Console.WriteLine(err.Message);
                             }
-                            
+                            continue;
+                        }
+
+                        if (process)
+                        {
+                            p.Process();
                         }
                     }
                     else
@@ -64,7 +69,7 @@ namespace packo
 
             if (!stop) return;
 
-            Console.ReadLine();
+            Console.WriteLine();
             Console.WriteLine(Message.Exit);
             Console.ReadLine();
         }
