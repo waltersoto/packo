@@ -1,0 +1,8 @@
+C:\Users\sotoreyesw\Documents\Visual Studio 2013\Projects\packo\packo\bin\Debug\packo.exe.config
+C:\Users\sotoreyesw\Documents\Visual Studio 2013\Projects\packo\packo\bin\Debug\packo.exe
+C:\Users\sotoreyesw\Documents\Visual Studio 2013\Projects\packo\packo\bin\Debug\packo.pdb
+C:\Users\sotoreyesw\Documents\Visual Studio 2013\Projects\packo\packo\bin\Debug\EcmaScript.NET.dll
+C:\Users\sotoreyesw\Documents\Visual Studio 2013\Projects\packo\packo\bin\Debug\Yahoo.Yui.Compressor.dll
+C:\Users\sotoreyesw\Documents\Visual Studio 2013\Projects\packo\packo\obj\Debug\packo.csprojResolveAssemblyReference.cache
+C:\Users\sotoreyesw\Documents\Visual Studio 2013\Projects\packo\packo\obj\Debug\packo.exe
+C:\Users\sotoreyesw\Documents\Visual Studio 2013\Projects\packo\packo\obj\Debug\packo.pdb
