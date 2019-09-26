@@ -1,8 +1,6 @@
-﻿ 
-namespace packo
-{
-    struct Templates
-    {
+﻿
+namespace packo {
+    internal struct Templates {
         public const string Filename = "{filename}";
         public const string Version = "{version}";
         public const string Package = "{package}";
